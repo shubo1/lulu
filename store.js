@@ -102,8 +102,9 @@ export function clearConfig() {
 }
 
 // 设置链接：网址 # 后面是 setup=<base64url(JSON)>。# 后面的部分浏览器不会发给任何服务器。
-export function readSetupLink(hash) {
-  const m = /^#setup=([A-Za-z0-9_-]+)$/.exec(hash || "");
+// text 可以是地址栏的 #… ，也可以是粘贴进来的整段文字（微信复制的链接前后可能带别的字）。
+export function readSetupLink(text) {
+  const m = /#setup=([A-Za-z0-9_-]+)/.exec(text || "");
   if (!m) return null;
   try {
     const b64 = m[1].replace(/-/g, "+").replace(/_/g, "/");

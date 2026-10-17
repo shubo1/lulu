@@ -95,19 +95,27 @@ async function loadLedger() {
 
 // ---------------------------------------------------------------- 页面
 
+// iPhone 主屏幕上的 app 和 Safari 各存各的，在 Safari 里连好的，主屏幕上的还要再连一次，
+// 而主屏幕 app 没有地址栏，所以这里可以直接粘贴设置链接。
 function setupView() {
   return `
     <h1>🧾 账单</h1>
     <h2>连接云端</h2>
-    <p class="caption">第一次打开要先连接云端。最省事的是用 Ethan 发的设置链接（复制到 Safari 里打开）；也可以在下面手动填。连好以后记在这台手机上。</p>
-    <form class="card" data-form="setup" autocomplete="off">
-      <label for="f-url">Project URL</label>
-      <input id="f-url" name="url" type="url" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="https://xxxx.supabase.co">
-      <label for="f-key">Publishable key（或旧版的 anon key）</label>
-      <input id="f-key" name="key" type="password" autocapitalize="off" spellcheck="false">
+    <p class="caption">第一次打开要先连接云端，连好以后就记在这里了。在微信里长按 Ethan 发的设置链接 →「复制」，回到这里粘贴到下面，点「连接」。</p>
+    <form class="card" data-form="setup-link" autocomplete="off">
+      <label for="f-link">设置链接</label>
+      <input id="f-link" name="link" type="text" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="粘贴整个链接">
       ${errorBox("setup")}
       <div class="buttons"><button class="primary" type="submit">连接</button></div>
-    </form>`;
+    </form>
+    ${details("manual", "手动填写地址和 key", `
+      <form data-form="setup" autocomplete="off">
+        <label for="f-url">Project URL</label>
+        <input id="f-url" name="url" type="url" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="https://xxxx.supabase.co">
+        <label for="f-key">Publishable key（或旧版的 anon key）</label>
+        <input id="f-key" name="key" type="password" autocapitalize="off" spellcheck="false">
+        <div class="buttons"><button type="submit">连接</button></div>
+      </form>`)}`;
 }
 
 function typesManager() {
@@ -415,6 +423,15 @@ function validBill(f) {
 // ---------------------------------------------------------------- 表单
 
 const forms = {
+  async "setup-link"(form) {
+    const link = readSetupLink(form.elements.link.value);
+    if (!link) {
+      S.errors.setup = "这不是设置链接。请把 Ethan 发的整个链接复制过来再粘贴。";
+      return render();
+    }
+    await connect(link.url, link.key);
+  },
+
   async setup(form) {
     const url = form.elements.url.value.trim().replace(/\/+$/, "");
     const key = form.elements.key.value.trim();

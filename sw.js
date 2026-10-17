@@ -2,7 +2,7 @@
 // 下次打开就是新版。只缓存本网站的文件；云端（Supabase）的数据从不缓存。
 // 改了网页文件，把 VERSION 加一，旧缓存会被清掉。
 
-const VERSION = "v1";
+const VERSION = "v2";
 const CACHE = `lulu-${VERSION}`;
 const FILES = [
   "./",
