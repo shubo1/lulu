@@ -1,0 +1,2 @@
+@noble/hashes 2.0.1 (npm, sha512 integrity checked), only the files scrypt needs.
+https://github.com/paulmillr/noble-hashes

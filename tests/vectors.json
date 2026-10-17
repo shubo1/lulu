@@ -1,0 +1,46 @@
+{
+ "ledger_id": "11111111-2222-3333-4444-555555555555",
+ "kdf": {
+  "alg": "scrypt",
+  "n": 65536,
+  "r": 8,
+  "p": 1,
+  "salt": "EKQwV3GfQYho+PZ/3VrAYw=="
+ },
+ "password": "测试密码-Test 1",
+ "auth": "4d5c74f5df18021d976f504ff707c0e5d4c2e1f0b6a814184668d426a718ae5d",
+ "check_blob": "S26U4tNKXtM+dvJ11wradznIyIir587kK4LpJyvStHA5EUdzymxa9a28fSwLz8XPr+gYFQ==",
+ "rows": [
+  {
+   "id": "2575f307-d9cb-4c75-a44b-79b683c8196c",
+   "ciphertext": "hKJ2BaQ2Vn20nGQ+VBkzwdx+eoi1UG3Hzxs8dwWCuvg2WDh4QXTt/l6TkCTQ8aRyuz4sENoWgtwEBEgyUhFWHx2RJXC5ALiO98gzi75qhB6kj+w6JuEcpsatQ/eBthnEqTYpvH69xILITgDiolx1MPQdtQT6JWQm5N16jqUz3QRlEMRaVrGDUdyavWpNrWTMg0vE0EKDEUUGWoWbAElB79AJ7pGs1ezI",
+   "updated_at": "x"
+  },
+  {
+   "id": "e7324c6d-3ed8-480a-ac22-6584fb3a041d",
+   "ciphertext": "phLZxWZOdQdfvSTAihHyGt1ilaIQ6VzbX+gY1ddkU9FBcO+GmAGGNv2D27pFQjdX3Nxrd204lpiWE2jowzKqaEcvg3KBkbNG7p2OMiw2BAPbkG8ttR6qgF3m4Q5UKHsKlLKj69RhjtkgI/qc5jlohYac0nutbReB1j3YQK55zbZRSv48NyaKHiOrFq4QYWrtTMHg0qw6C6HMXoiXB5DIODyQhnW52m9mgzzgGF8=",
+   "updated_at": "x"
+  }
+ ],
+ "expected": [
+  {
+   "type": "电费",
+   "amount_cents": 18240,
+   "period_start": "2026-07-01",
+   "period_end": "2026-09-30",
+   "due_date": "2026-06-30",
+   "paid": false
+  },
+  {
+   "type": "Council 费",
+   "amount_cents": 114795,
+   "period_start": "2026-10-01",
+   "period_end": "2026-12-31",
+   "due_date": "2026-09-30",
+   "paid": true
+  }
+ ],
+ "second_password": "她的测试密码2",
+ "second_blob": "{\"v\": 1, \"kdf\": {\"alg\": \"scrypt\", \"n\": 65536, \"r\": 8, \"p\": 1, \"salt\": \"O9wCM3fxTn7v5Wn3dmxLog==\"}, \"wrapped\": \"8XeLrndiltFXHGrgjylcNWguHbUsH/Hettn5FKw7zvTwBlPmdBZQ9UeAtJ9cXy8tw/Hz9TWDf3diGCMc2uPmi/+0Govg9BScViV6CsmjzLoTqYiPmJli5/h5RZ1Or9B7/wD3RVnmy0etHGKHeoNPVJ681YzWiOEIulv5twp3Mo26Ip0XAoi+Qxkmed1+oHZvDNz/crY/RB+AEiwhG7Q35oDPlA==\"}",
+ "second_row_id_python": "ed3d3edb-a44f-58e2-9648-20a2a7e48456"
+}

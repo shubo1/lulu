@@ -1,0 +1,264 @@
+/* 账单手机版：配色和 Mac 版一样（奶油底、暖棕字、柚子橙）。所有东西都在本地，不从外网加载字体。 */
+:root {
+  --bg: #fff8ee;
+  --bg2: #f6eadb;
+  --card: rgba(255, 253, 249, 0.96);
+  --text: #4a3426;
+  --muted: #8b7563;
+  --accent: #e07b2d;
+  --accent-dark: #c0651f;
+  --brown: #8a4f1c;
+  --border: #ead8c3;
+  --green: #2e8b57;
+  --red: #c8462d;
+  --orange: #d97a1a;
+  --blue: #3b78b5;
+  --shadow: 0 2px 10px rgba(120, 80, 40, 0.08);
+  --radius: 16px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 -apple-system, "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 120px);
+}
+/* 右下角的噜噜和噜妹（Mac 版同一张图，边缘已经是奶油色），垫在内容下面 */
+.bg-lulu {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: min(62vw, 300px);
+  aspect-ratio: 889 / 500;
+  background: url("static/lulu_stairs.jpg") center / cover no-repeat;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+h1 { font-size: 1.9rem; margin: 0.4rem 0 0.2rem; letter-spacing: 0.02em; }
+h2 { font-size: 1.25rem; margin: 1.4rem 0 0.6rem; }
+p { margin: 0.4rem 0; }
+.loading { text-align: center; margin-top: 40vh; color: var(--muted); }
+.caption { color: var(--muted); font-size: 0.85rem; }
+.title-row { display: flex; align-items: center; gap: 10px; }
+.title-row img { width: 64px; height: 64px; border-radius: 50%; }
+
+/* 卡片 */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+  margin: 10px 0;
+}
+.row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.row .grow { flex: 1; min-width: 0; }
+.name { font-weight: 600; overflow-wrap: anywhere; }
+.amount { font-weight: 600; white-space: nowrap; }
+
+/* 按钮 */
+button {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: #fffdf9;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 16px;
+  min-height: 38px;
+  cursor: pointer;
+}
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger { color: var(--red); }
+button:disabled { opacity: 0.5; }
+button:active { transform: scale(0.97); }
+.buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.topbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+
+/* 输入 */
+label { display: block; font-size: 0.9rem; margin: 10px 0 4px; }
+input, select {
+  font: inherit;
+  font-size: 16px; /* 小于 16px 时 iPhone 会自动放大页面 */
+  width: 100%;
+  color: var(--text);
+  background: #fffdf9;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 9px 12px;
+  min-height: 42px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input[type="date"] { display: block; }
+select { background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+input:focus, select:focus { outline: 2px solid rgba(224, 123, 45, 0.45); outline-offset: 1px; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.two input { min-width: 0; }
+.error { color: var(--red); background: #fdecea; border-radius: 12px; padding: 8px 12px; margin: 10px 0; }
+.warn { background: #fff3d6; border-radius: 12px; padding: 8px 12px; margin: 10px 0; }
+.info { background: #eef4fb; border-radius: 12px; padding: 8px 12px; margin: 10px 0; }
+
+/* 展开栏 */
+details.card { padding: 0; }
+details.card > summary {
+  list-style: none;
+  padding: 13px 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+details.card > summary::-webkit-details-marker { display: none; }
+details.card > summary::before { content: "›"; display: inline-block; width: 1em; transition: transform 0.15s; color: var(--muted); }
+details.card[open] > summary::before { transform: rotate(90deg); }
+details.card > .body { padding: 0 16px 14px; }
+
+/* 数字卡片 */
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+.metrics.two-col { grid-template-columns: 1fr 1fr; }
+.metric { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; box-shadow: var(--shadow); }
+.metric .label { font-size: 0.78rem; color: var(--muted); }
+.metric .value { font-size: 1.3rem; color: var(--brown); font-weight: 600; white-space: nowrap; }
+
+/* 标签页、筛选 */
+.tabs, .seg { display: flex; gap: 6px; margin: 10px 0; }
+.tabs button, .seg button { flex: 1; }
+.tabs button.on, .seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.seg button { min-height: 34px; padding: 4px 10px; }
+
+/* 状态标签 */
+.badge { display: inline-block; font-size: 0.8rem; padding: 1px 10px; border-radius: 999px; margin: 6px 0 2px; }
+.badge.green { background: #e3f3e8; color: var(--green); }
+.badge.red { background: #fde3dc; color: var(--red); }
+.badge.orange { background: #fdebd5; color: var(--orange); }
+.badge.blue { background: #e2edf8; color: var(--blue); }
+
+/* 账单类型 */
+.type-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chip { display: inline-flex; align-items: center; gap: 4px; background: var(--bg2); border-radius: 999px; padding: 3px 4px 3px 12px; }
+.chip button { min-height: 28px; padding: 0 10px; font-size: 0.8rem; border: none; background: transparent; color: var(--red); }
+
+/* 花销柱状图 */
+.chart { display: grid; grid-template-columns: repeat(12, 1fr); align-items: end; gap: 4px; height: 190px; margin: 14px 0 4px; }
+.bar { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
+.bar .v { font-size: 0.62rem; color: var(--muted); white-space: nowrap; }
+.bar .b { width: 100%; background: #c49a6c; border-radius: 6px 6px 0 0; min-height: 0; }
+.bar.now .b { background: var(--accent); }
+.bar .m { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 6px; }
+th, td { text-align: left; padding: 5px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+td.num { text-align: right; white-space: nowrap; }
+
+/* 解锁进度 */
+.progress { height: 6px; background: var(--bg2); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+.progress div { height: 100%; width: 35%; background: var(--accent); border-radius: 999px; animation: working 1s ease-in-out infinite alternate; }
+@keyframes working { from { transform: translateX(-10%); } to { transform: translateX(200%); } }
+
+/* 弹出框 */
+dialog {
+  width: min(92vw, 480px);
+  border: none;
+  border-radius: 20px;
+  padding: 18px;
+  background: #fffdf9;
+  color: var(--text);
+  box-shadow: 0 10px 40px rgba(80, 50, 20, 0.25);
+}
+dialog::backdrop { background: rgba(74, 52, 38, 0.35); }
+dialog h2 { margin-top: 0; }
+
+/* 提示条 */
+#toast {
+  position: fixed;
+  left: 50%;
+  top: calc(env(safe-area-inset-top) + 12px);
+  transform: translate(-50%, -150%);
+  background: #fffdf9;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 8px 18px;
+  box-shadow: var(--shadow);
+  z-index: 50;
+  transition: transform 0.25s;
+  max-width: 90vw;
+  text-align: center;
+}
+#toast.show { transform: translate(-50%, 0); }
+#toast.err { color: var(--red); }
+
+/* ---------------- 「噜噜的情债」打开时的动画（和 Mac 版 style.lulu_scene 一样） ---------------- */
+.lulu-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 248, 238, 0.9);
+  pointer-events: none;
+  animation: lulu-scene 5s ease forwards;
+}
+@keyframes lulu-scene {
+  0% { opacity: 0; }
+  7% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+.lulu-media {
+  width: min(420px, 78vw, 58vh);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+}
+.lulu-say { font-size: 2rem; font-weight: 700; color: var(--brown); text-align: center; padding: 0 12px; }
+.lulu-sub { color: var(--text); opacity: 0.75; }
+@keyframes lulu-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.lulu-hit .lulu-media { animation: lulu-pop 0.35s ease-out both, lulu-shake 0.45s ease-in-out 1.8s 2; }
+.lulu-hit .lulu-say { animation: lulu-shake 0.45s ease-in-out 1.8s 2; }
+@keyframes lulu-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(-10px, 2px) rotate(-1.5deg); }
+  40% { transform: translate(9px, -2px) rotate(1.5deg); }
+  60% { transform: translate(-6px, 1px) rotate(-1deg); }
+  80% { transform: translate(4px, 0) rotate(0.5deg); }
+}
+.lulu-hug .lulu-media { animation: lulu-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both, lulu-breathe 1.6s ease-in-out 0.5s infinite; }
+@keyframes lulu-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+.lulu-sorry .lulu-media { animation: lulu-pop 0.4s ease-out both, lulu-plead 1.2s ease-in-out 0.4s infinite; transform-origin: 50% 85%; }
+.lulu-sorry .lulu-say { animation: lulu-plead 1.2s ease-in-out 0.4s infinite; }
+@keyframes lulu-plead {
+  0%, 100% { transform: rotate(0) translateY(0); }
+  25% { transform: rotate(-3deg) translateY(2px); }
+  50% { transform: rotate(0) translateY(-3px); }
+  75% { transform: rotate(3deg) translateY(2px); }
+}
+.lulu-float {
+  position: absolute;
+  bottom: 28%;
+  font-size: 2rem;
+  opacity: 0;
+  animation: lulu-float 2.6s ease-in forwards;
+}
+@keyframes lulu-float {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateY(-45vh) scale(1.2); opacity: 0; }
+}

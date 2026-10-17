@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>加密互通测试</title>
+<pre id="out">运行中…</pre>
+<script type="module">
+// 和 Mac 版互通的测试：vectors.json 是 Mac 版（Python）生成的。
+// 1. 手机版用同一个密码算出同一个写入凭证、解开 check、解开账单、解开第二套密码；
+// 2. 手机版自己加密一条账单、包一份第二套密码，结果放进 window.__results.fromJs，交给 Python 去解。
+import * as c from "../crypto.js";
+import * as core from "../core.js";
+
+const results = { ok: [], fail: [] };
+const check = (name, cond) => (cond ? results.ok : results.fail).push(name);
+const t0 = performance.now();
+try {
+  const v = await (await fetch("vectors.json", { cache: "no-store" })).json();
+  const key = await c.deriveKey(v.password, v.kdf);
+  results.deriveMs = Math.round(performance.now() - t0);
+  check("same auth as Python", key.auth === v.auth);
+  check("check blob verifies", await c.verifyCheck(key, v.check_blob, v.ledger_id));
+  check("wrong ledger id fails check", !(await c.verifyCheck(key, v.check_blob, "other")));
+  const [bills, bad] = await core.decryptBills(key, v.ledger_id, v.rows);
+  check("no bad rows", bad === 0);
+  check("bills equal", JSON.stringify(bills.map(({ id, ...b }) => b)) === JSON.stringify(v.expected));
+  const swapped = [{ ...v.rows[0], id: v.rows[1].id }];
+  check("swapped ciphertext rejected", (await core.decryptBills(key, v.ledger_id, swapped))[1] === 1);
+  const second = await c.unwrapKey(v.second_blob, v.second_password, core.secondKeyContext(v.ledger_id));
+  check("second password unwraps same key", second.auth === v.auth && (await c.verifyCheck(second, v.check_blob, v.ledger_id)));
+  let refused = false;
+  try { await c.unwrapKey(v.second_blob, "wrong-pass", core.secondKeyContext(v.ledger_id)); } catch (e) { refused = e instanceof c.BadPassword; }
+  check("wrong second password refused", refused);
+  check("second row id matches", core.SECOND_KEY_ROW_ID === v.second_row_id_python);
+  const newBill = { type: "网络 🍊", amount_cents: 7999, period_start: "2026-11-01", period_end: "2026-11-30", due_date: "2026-10-31", paid: false };
+  const newId = crypto.randomUUID();
+  results.fromJs = {
+    bill_id: newId,
+    bill: newBill,
+    ciphertext: await core.encryptBill(key, v.ledger_id, newId, newBill),
+    check_blob: await c.makeCheck(key, v.ledger_id),
+    second_blob: await c.wrapKey(key, "手机设的密码3", core.secondKeyContext(v.ledger_id)),
+  };
+} catch (e) {
+  results.error = String(e && e.stack || e);
+}
+results.totalMs = Math.round(performance.now() - t0);
+window.__results = results;
+document.getElementById("out").textContent = JSON.stringify(results, null, 1);
+</script>
